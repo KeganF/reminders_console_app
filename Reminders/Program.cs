@@ -73,6 +73,15 @@ public class Program
         reminders.Add(r);
     }
 
+    //----------------------------------------------------------------------//
+    // METHOD > DeserializeJson                                             //          
+    //          Reads JSON data from a file and deserializes the JSON       //
+    //          string to a List<Reminder> object                           //
+    //                                                                      //
+    // PARAMS > none                                                        //
+    //                                                                      //
+    // RETURN > void                                                        //
+    //----------------------------------------------------------------------//
     public static void DeserializeJson()
     {
         // Create directory if it doesn't exist
@@ -105,6 +114,15 @@ public class Program
         }
     }
 
+    //----------------------------------------------------------------------//
+    // METHOD > SerializeJson                                               //          
+    //          Serializes a List<Reminder> object to JSON and writes the   //
+    //          data to a file                                              //             
+    //                                                                      //
+    // PARAMS > none                                                        //
+    //                                                                      //
+    // RETURN > void                                                        //
+    //----------------------------------------------------------------------//
     public static void SerializeJson()
     {
         // Create directory if it doesn't exist

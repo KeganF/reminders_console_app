@@ -1,5 +1,6 @@
-﻿using ConsoleIOManager;
-using static System.Console;
+﻿using static System.Console;
+using ConsoleIOManager;
+using Newtonsoft.Json;
 namespace RemindersLib;
 //-----------------------------Constructors-----------------------------//
 //-----------------------------V1.1-KeganF------------------------------//
@@ -48,7 +49,7 @@ public class Reminder
     public DateOnly Date  { get; set; }
     public TimeOnly Time  { get; set; }
     public bool IsAutoDel { get; set; }
-    
+    [JsonIgnore]
     public int ExpiredDays 
     { 
         get 

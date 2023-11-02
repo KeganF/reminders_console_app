@@ -7,7 +7,7 @@ using RemindersLib;
 using Newtonsoft.Json;
 namespace Program;
 
-//-----------------------------V1.3-KeganF------------------------------//
+//-----------------------------V1.4-KeganF------------------------------//
 // CLASS > Program                                                      //
 //         Contains the Main method for the Reminders Console App       //
 //         Allows users to manage their reminders via the console       //
@@ -23,8 +23,39 @@ public class Program
     {
         DeserializeJson();
         DeleteExpiredReminders();
-        DisplayReminders();
-        Add();
+        
+        // Set operating mode based on command line args
+        string mode = "";
+        if (args.Length > 0)
+        {
+            mode = args[0].ToLower();
+        }
+
+        switch (mode)
+        {
+            // TODO - Add a case to display a full menu of options
+            // (Don't want to display a full menu by default, 
+            // could be annoying if you have to close a menu everytime you open a CLI)
+            // case "m":
+            // case "menu":
+            //     DisplayMenu();
+            case "n":
+            case "new":
+                Add();
+                break;
+            case "d":
+            case "delete":
+                Delete();
+                break;
+            case "v":
+            case "verbose":
+                DisplayReminders();
+                break;
+            default:
+                DisplayShortReminders();
+                break;
+        }
+
         SerializeJson();
     }
 
@@ -40,43 +71,98 @@ public class Program
     //----------------------------------------------------------------------//
     public static void Add()
     {
-        // Set title and description
-        Write("Set a title for your reminder > ");
-        string title = ReadLine() ?? "";
-        Write("Set a description for your reminder > ");
-        string desc = ReadLine() ?? "";
+        bool isDone = false;
+        do {
+            // Set title and description
+            Write("Set a title for your reminder > ");
+            string title = ReadLine() ?? "";
+            Write("Set a description for your reminder > ");
+            string desc = ReadLine() ?? "";
 
-        // Set date and time
-        DateOnly date = DateOnly.FromDateTime(
-            ConsoleManager.GetConvertedInput<DateTime>("Set a date for this reminder "));
-        TimeOnly time = TimeOnly.FromDateTime(
-            ConsoleManager.GetConvertedInput<DateTime>("Set a time for this reminder "));
+            // Set date and time
+            DateOnly date = DateOnly.FromDateTime(
+                ConsoleManager.GetConvertedInput<DateTime>("Set a date for this reminder "));
+            TimeOnly time = TimeOnly.FromDateTime(
+                ConsoleManager.GetConvertedInput<DateTime>("Set a time for this reminder "));
 
-        // Check for dates in the past
-        if (DateOnly.FromDateTime(DateTime.Now) > date)
-        {
-            bool isAcceptedDate = Convert.ToBoolean(
-                ConsoleManager.DisplayCheckBoxes(new string[]{"No", "Yes"},
-                $"{date} has already passed. Do you want to finish creating this reminder?"));
-
-            if (!isAcceptedDate)
+            // Check for dates in the past
+            if (DateOnly.FromDateTime(DateTime.Now) > date)
             {
-                WriteLine("This reminder has been cancelled!");
-                return;
-            }
-        }
-        
-        bool isAutoDel = Convert.ToBoolean(
-            ConsoleManager.DisplayCheckBoxes(new string[]{"No", "Yes"}, 
-            $"Do you want this reminder to be automatically deleted after {date} at {time}?"));
+                bool isAcceptedDate = ConsoleManager.DisplayYesNo(
+                    $"{date} has already passed. Do you want to finish creating this reminder?");
 
-        Reminder r = new (title, desc, date, time, isAutoDel);
-        reminders.Add(r);
+                if (!isAcceptedDate)
+                {
+                    ConsoleManager.WriteLineColored("This reminder has been cancelled!", ConsoleColor.Red);
+                    return;
+                }
+            }
+            
+            bool isAutoDel = ConsoleManager.DisplayYesNo(
+                $"Do you want this reminder to be automatically deleted after {date} at {time}?");
+
+            Reminder r = new (title, desc, date, time, isAutoDel);
+            reminders.Add(r);
+
+            // Prompt user if they would like to continue adding records
+            isDone = !ConsoleManager.DisplayYesNo("Do you want to create another reminder?");
+
+        } while (!isDone);
+    }
+
+    //----------------------------------------------------------------------//
+    // METHOD > Delete                                                      //          
+    //          Allows the user to manually select and delete reminders     //
+    //                                                                      //
+    // PARAMS > none                                                        //
+    //                                                                      //
+    // RETURN > void                                                        //
+    //----------------------------------------------------------------------//
+    public static void Delete()
+    {
+        bool isDone = false;
+        do
+        {
+            // Create array of reminder titles
+            string[] remindersArray = new string[reminders.Count];
+            for (int i = 0; i < reminders.Count; i++)
+            {
+                remindersArray[i] = reminders[i].Title;
+            }
+
+            // Display array of reminder titles for the user to choose from
+            int selectedIndex = ConsoleManager.DisplayCheckBoxes(remindersArray,
+                "Select a reminder to delete:");
+            // Remove the reminder at the selected index from the list
+            reminders.RemoveAt(selectedIndex);
+
+            // Prompt user if they would like to continue deleting records
+            isDone = !ConsoleManager.DisplayYesNo("Do you want to delete more reminders?");
+                
+        } while (!isDone && reminders.Count > 0);
+    }
+
+    //----------------------------------------------------------------------//
+    // METHOD > DisplayShortReminders                                       //          
+    //          Displays a list of all current reminders in a brief/compact //
+    //          format                                                      //
+    //                                                                      //
+    // PARAMS > none                                                        //
+    //                                                                      //
+    // RETURN > void                                                        //
+    //----------------------------------------------------------------------//
+    public static void DisplayShortReminders()
+    {
+        foreach(Reminder r in reminders)
+        {
+            r.DisplayShort();
+        }
     }
 
     //----------------------------------------------------------------------//
     // METHOD > DisplayReminders                                            //          
-    //          Displays a list of all current reminders                    //
+    //          Displays a list of all current reminders in a detailed      //
+    //          format                                                      //
     //                                                                      //
     // PARAMS > none                                                        //
     //                                                                      //
@@ -86,7 +172,7 @@ public class Program
     {
         foreach (Reminder r in reminders)
         {
-            r.ShortDisplay();
+            r.Display();
         }
     }
 

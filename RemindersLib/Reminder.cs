@@ -36,14 +36,10 @@ public class Reminder
         WriteLine($"Desc: {Desc}");
         WriteLine($"Date: {Date}");
         WriteLine($"Time: {Time}");
-        if (ExpiredDays > 0)
-        {
-            ConsoleManager.WriteColoredLine(
-                $"This reminder expired {ExpiredDays} ago!", ConsoleColor.Red);
-        }
+        CheckExpired();
     }
 
-    public void ShortDisplay()
+    public void DisplayShort()
     {
         int headerPadding = 20;
         int remainingSpace = headerPadding - Title.Length;
@@ -53,8 +49,18 @@ public class Reminder
             Write(" ");
         }
         Write($"| {Date.ToString("MMM dd, yyyy")} @ {Time}\n");
+        CheckExpired();
     }
     
+    private void CheckExpired()
+    {
+        if (ExpiredDays > 0)
+        {
+            ConsoleManager.WriteLineColored(
+                $"This reminder expired {ExpiredDays} ago!", ConsoleColor.Red);
+        }
+    }
+
     //----------------------------v-Properties-v----------------------------//
     public string Title   { get; set; }
     public string Desc    { get; set; }

@@ -3,7 +3,7 @@ using ConsoleIOManager;
 using Newtonsoft.Json;
 namespace RemindersLib;
 //-----------------------------Constructors-----------------------------//
-//-----------------------------V1.1-KeganF------------------------------//
+//-----------------------------V1.2-KeganF------------------------------//
 // CLASS > Reminder                                                     //
 //         Provides members for defining Reminder objects               //
 //----------------------------------------------------------------------//
@@ -22,7 +22,7 @@ public class Reminder
     
     //-----------------------------v-Methods-v------------------------------//
     //----------------------------------------------------------------------//
-    // METHOD > DisplaySummary                                              //          
+    // METHOD > Display                                                     //          
     //          Formats and displays object values to quickly summarize     //
     //          a Reminder                                                  //
     //                                                                      //
@@ -30,7 +30,7 @@ public class Reminder
     //                                                                      //
     // RETURN > void                                                        //
     //----------------------------------------------------------------------//
-    public void DisplaySummary()
+    public void Display()
     {
         WriteLine($"Title: {Title}");
         WriteLine($"Desc: {Desc}");
@@ -41,6 +41,18 @@ public class Reminder
             ConsoleManager.WriteColoredLine(
                 $"This reminder expired {ExpiredDays} ago!", ConsoleColor.Red);
         }
+    }
+
+    public void ShortDisplay()
+    {
+        int headerPadding = 20;
+        int remainingSpace = headerPadding - Title.Length;
+        Write($"{Title}");
+        for (int i = 0; i < remainingSpace; i++)
+        {
+            Write(" ");
+        }
+        Write($"| {Date.ToString("MMM dd, yyyy")} @ {Time}\n");
     }
     
     //----------------------------v-Properties-v----------------------------//

@@ -7,7 +7,7 @@ using RemindersLib;
 using Newtonsoft.Json;
 namespace Program;
 
-//-----------------------------V1.2-KeganF------------------------------//
+//-----------------------------V1.3-KeganF------------------------------//
 // CLASS > Program                                                      //
 //         Contains the Main method for the Reminders Console App       //
 //         Allows users to manage their reminders via the console       //
@@ -22,6 +22,8 @@ public class Program
     public static void Main(string[] args)
     {
         DeserializeJson();
+        DeleteExpiredReminders();
+        DisplayReminders();
         Add();
         SerializeJson();
     }
@@ -68,9 +70,44 @@ public class Program
             ConsoleManager.DisplayCheckBoxes(new string[]{"No", "Yes"}, 
             $"Do you want this reminder to be automatically deleted after {date} at {time}?"));
 
-        Reminder r = new Reminder(title, desc, date, time, isAutoDel);
-        r.DisplaySummary();
+        Reminder r = new (title, desc, date, time, isAutoDel);
         reminders.Add(r);
+    }
+
+    //----------------------------------------------------------------------//
+    // METHOD > DisplayReminders                                            //          
+    //          Displays a list of all current reminders                    //
+    //                                                                      //
+    // PARAMS > none                                                        //
+    //                                                                      //
+    // RETURN > void                                                        //
+    //----------------------------------------------------------------------//
+    public static void DisplayReminders()
+    {
+        foreach (Reminder r in reminders)
+        {
+            r.ShortDisplay();
+        }
+    }
+
+    //----------------------------------------------------------------------//
+    // METHOD > DeleteExpiredReminders                                      //          
+    //          Removes Reminder objects from the reminders List if the     //
+    //          Reminder has expired and has IsAutoDel set to true          //
+    //                                                                      //
+    // PARAMS > none                                                        //
+    //                                                                      //
+    // RETURN > void                                                        //
+    //----------------------------------------------------------------------//
+    public static void DeleteExpiredReminders()
+    {
+        for (int i = 0; i < reminders.Count; i++)
+        {
+            if (reminders[i].ExpiredDays > 0 && reminders[i].IsAutoDel)
+            {
+                reminders.RemoveAt(i);
+            }
+        }
     }
 
     //----------------------------------------------------------------------//

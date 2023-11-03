@@ -3,7 +3,7 @@ using ConsoleIOManager;
 using Newtonsoft.Json;
 namespace RemindersLib;
 //-----------------------------Constructors-----------------------------//
-//-----------------------------V1.2.1-KeganF----------------------------//
+//-----------------------------V1.2.2-KeganF----------------------------//
 // CLASS > Reminder                                                     //
 //         Provides members for defining Reminder objects               //
 //----------------------------------------------------------------------//
@@ -48,8 +48,9 @@ public class Reminder
         {
             Write(" ");
         }
-        Write($"| {Date.ToString("MMM dd, yyyy")} @ {Time}\n");
+        Write($"| {Date.ToString("MMM dd, yyyy")} @ {Time}");
         CheckExpired();
+        WriteLine();
     }
     
     private void CheckExpired()
@@ -57,7 +58,7 @@ public class Reminder
         if (ExpiredDays > 0)
         {
             ConsoleManager.WriteColored(
-                $"! Ended {ExpiredDays} ago", ConsoleColor.Red);
+                $" ! Ended {ExpiredDays} day(s) ago", ConsoleColor.Red);
         }
     }
 
